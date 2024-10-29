@@ -15,7 +15,7 @@ public extension MoyaProvider {
       self.provider = provider
     }
 
-    func request(_ target: Target) async throws -> Response {
+    public func request(_ target: Target) async throws -> Response {
       return try await withCheckedThrowingContinuation { continuation in
         provider.request(target) { result in
           switch result {

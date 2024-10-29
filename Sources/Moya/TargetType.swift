@@ -1,7 +1,7 @@
 import Foundation
 
 /// The protocol used to define the specifications necessary for a `MoyaProvider`.
-public protocol TargetType {
+public protocol TargetType: Sendable {
 
     /// The target's base `URL`.
     var baseURL: URL { get }

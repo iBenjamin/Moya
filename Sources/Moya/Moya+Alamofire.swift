@@ -34,8 +34,8 @@ extension Request: RequestType {
 public typealias RequestInterceptor = Alamofire.RequestInterceptor
 
 /// Internal token that can be used to cancel requests
-public final class CancellableToken: Cancellable, CustomDebugStringConvertible {
-    let cancelAction: () -> Void
+public final class CancellableToken: Cancellable, CustomDebugStringConvertible,  @unchecked Sendable {
+    let cancelAction: @Sendable () -> Void
     let request: Request?
 
     public fileprivate(set) var isCancelled = false
@@ -50,7 +50,7 @@ public final class CancellableToken: Cancellable, CustomDebugStringConvertible {
         cancelAction()
     }
 
-    public init(action: @escaping () -> Void) {
+    public init(action: @Sendable @escaping () -> Void) {
         self.cancelAction = action
         self.request = nil
     }
@@ -72,7 +72,7 @@ public final class CancellableToken: Cancellable, CustomDebugStringConvertible {
 
 }
 
-internal typealias RequestableCompletion = (HTTPURLResponse?, URLRequest?, Data?, Swift.Error?) -> Void
+internal typealias RequestableCompletion = @Sendable (HTTPURLResponse?, URLRequest?, Data?, Swift.Error?) -> Void
 
 internal protocol Requestable {
     func response(callbackQueue: DispatchQueue?, completionHandler: @escaping RequestableCompletion) -> Self
@@ -106,13 +106,12 @@ extension DownloadRequest: Requestable {
     }
 }
 
-final class MoyaRequestInterceptor: RequestInterceptor {
-    var prepare: ((URLRequest) -> URLRequest)?
+final class MoyaRequestInterceptor: RequestInterceptor, @unchecked Sendable {
+    var prepare: (@Sendable (URLRequest) -> URLRequest)?
 
-    @Atomic
-    var willSend: ((URLRequest) -> Void)?
+    var willSend: (@Sendable (URLRequest) -> Void)?
 
-    init(prepare: ((URLRequest) -> URLRequest)? = nil, willSend: ((URLRequest) -> Void)? = nil) {
+    init(prepare: (@Sendable (URLRequest) -> URLRequest)? = nil, willSend: (@Sendable (URLRequest) -> Void)? = nil) {
         self.prepare = prepare
         self.willSend = willSend
     }

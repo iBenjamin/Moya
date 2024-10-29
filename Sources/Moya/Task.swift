@@ -1,6 +1,8 @@
 import Foundation
+import Alamofire
 
 /// Represents an HTTP task.
+@preconcurrency
 public enum Task {
 
     /// A request with no additional data.
@@ -16,13 +18,13 @@ public enum Task {
     case requestCustomJSONEncodable(Encodable, encoder: JSONEncoder)
 
     /// A requests body set with encoded parameters.
-    case requestParameters(parameters: [String: Any], encoding: ParameterEncoding)
+    case requestParameters(parameters: Parameters, encoding: ParameterEncoding)
 
     /// A requests body set with data, combined with url parameters.
-    case requestCompositeData(bodyData: Data, urlParameters: [String: Any])
+    case requestCompositeData(bodyData: Data, urlParameters: Parameters)
 
     /// A requests body set with encoded parameters combined with url parameters.
-    case requestCompositeParameters(bodyParameters: [String: Any], bodyEncoding: ParameterEncoding, urlParameters: [String: Any])
+    case requestCompositeParameters(bodyParameters: Parameters, bodyEncoding: ParameterEncoding, urlParameters: Parameters)
 
     /// A file upload task.
     case uploadFile(URL)
@@ -35,15 +37,15 @@ public enum Task {
     case uploadMultipart([MultipartFormBodyPart])
 
     /// A "multipart/form-data" upload task  combined with url parameters.
-    case uploadCompositeMultipartFormData(MultipartFormData, urlParameters: [String: Any])
+    case uploadCompositeMultipartFormData(MultipartFormData, urlParameters: Parameters)
 
     /// A "multipart/form-data" upload task  combined with url parameters.
     @available(*, deprecated, message: "use `uploadCompositeMultipartFormData(MultipartFormData)` instead")
-    case uploadCompositeMultipart([MultipartFormBodyPart], urlParameters: [String: Any])
+    case uploadCompositeMultipart([MultipartFormBodyPart], urlParameters: Parameters)
 
     /// A file download task to a destination.
     case downloadDestination(DownloadDestination)
 
     /// A file download task to a destination with extra parameters using the given encoding.
-    case downloadParameters(parameters: [String: Any], encoding: ParameterEncoding, destination: DownloadDestination)
+    case downloadParameters(parameters: Parameters, encoding: ParameterEncoding, destination: DownloadDestination)
 }

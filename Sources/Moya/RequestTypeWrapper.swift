@@ -1,7 +1,7 @@
 import Foundation
 
 // Workaround for new asynchronous handling of Alamofire's request creation.
-struct RequestTypeWrapper: RequestType {
+struct RequestTypeWrapper: RequestType, @unchecked Sendable {
 
     var request: URLRequest? { _urlRequest }
 
@@ -25,7 +25,7 @@ struct RequestTypeWrapper: RequestType {
         return RequestTypeWrapper(request: newRequest, urlRequest: _urlRequest)
     }
 
-    func cURLDescription(calling handler: @escaping (String) -> Void) -> RequestTypeWrapper {
+    func cURLDescription(calling handler: @escaping @Sendable (String) -> Void) -> RequestTypeWrapper {
         _request.cURLDescription(calling: handler)
         return self
     }

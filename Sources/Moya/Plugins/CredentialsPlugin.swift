@@ -1,7 +1,7 @@
 import Foundation
 
 /// Provides each request with optional URLCredentials.
-public final class CredentialsPlugin: PluginType {
+public final class CredentialsPlugin: PluginType, @unchecked Sendable {
 
     public typealias CredentialClosure = (TargetType) -> URLCredential?
     let credentialsClosure: CredentialClosure

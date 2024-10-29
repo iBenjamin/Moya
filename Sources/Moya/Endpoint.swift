@@ -17,8 +17,9 @@ public enum EndpointSampleResponse {
 /// - Note: As of Moya 11.0.0 Endpoint is no longer generic.
 ///   Existing code should work as is after removing the generic.
 ///   See #1529 and #1524 for the discussion.
-open class Endpoint {
-    public typealias SampleResponseClosure = () -> EndpointSampleResponse
+@preconcurrency
+open class Endpoint:  @unchecked Sendable {
+    public typealias SampleResponseClosure = @Sendable () -> EndpointSampleResponse
 
     /// A string representation of the URL for the request.
     public let url: String

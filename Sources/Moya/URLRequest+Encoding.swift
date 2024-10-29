@@ -1,4 +1,5 @@
 import Foundation
+import Alamofire
 
 internal extension URLRequest {
 
@@ -17,8 +18,8 @@ internal extension URLRequest {
             throw MoyaError.encodableMapping(error)
         }
     }
-
-    func encoded(parameters: [String: Any], parameterEncoding: ParameterEncoding) throws -> URLRequest {
+  
+    func encoded(parameters: Parameters, parameterEncoding: ParameterEncoding) throws -> URLRequest {
         do {
             return try parameterEncoding.encode(self, with: parameters)
         } catch {

@@ -60,7 +60,7 @@ extension AuthorizationType: Equatable {
  ```
 
  */
-public struct AccessTokenPlugin: PluginType {
+public struct AccessTokenPlugin: PluginType, @unchecked Sendable {
 
     public typealias TokenClosure = (TargetType) -> String
 

@@ -111,7 +111,7 @@ public extension MoyaProvider {
     }
 
     /// Creates a function which, when called, executes the appropriate stubbing behavior for the given parameters.
-    final func createStubFunction(_ token: CancellableToken, forTarget target: Target, withCompletion completion: @escaping Moya.Completion, endpoint: Endpoint, plugins: [PluginType], request: URLRequest) -> (() -> Void) { // swiftlint:disable:this function_parameter_count
+    final func createStubFunction(_ token: CancellableToken, forTarget target: Target, withCompletion completion: @escaping Moya.Completion, endpoint: Endpoint, plugins: [PluginType], request: URLRequest) -> (@Sendable () -> Void) { // swiftlint:disable:this function_parameter_count
         return {
             if token.isCancelled {
                 self.cancelCompletion(completion, target: target)
@@ -243,8 +243,8 @@ private extension MoyaProvider {
         // Give plugins the chance to alter the outgoing request
         let plugins = self.plugins
         var progressAlamoRequest = alamoRequest
-        let progressClosure: (Progress) -> Void = { progress in
-            let sendProgress: () -> Void = {
+        let progressClosure: @Sendable (Progress) -> Void = { progress in
+            let sendProgress: @Sendable () -> Void = {
                 progressCompletion?(ProgressResponse(progress: progress))
             }
 
@@ -274,7 +274,7 @@ private extension MoyaProvider {
             }
         }
 
-        let completionHandler: RequestableCompletion = { response, request, data, error in
+        let completionHandler: RequestableCompletion = { [progressAlamoRequest = progressAlamoRequest] response, request, data, error in
             let result = convertResponseToResult(response, request: request, data: data, error: error)
             // Inform all plugins about the response
             plugins.forEach { $0.didReceive(result, target: target) }

@@ -1,10 +1,10 @@
 import Foundation
 
 /// Closure to be executed when a request has completed.
-public typealias Completion = (_ result: Result<Moya.Response, MoyaError>) -> Void
+public typealias Completion = @Sendable (_ result: Result<Moya.Response, MoyaError>) -> Void
 
 /// Closure to be executed when progress changes.
-public typealias ProgressBlock = (_ progress: ProgressResponse) -> Void
+public typealias ProgressBlock = @Sendable (_ progress: ProgressResponse) -> Void
 
 /// A type representing the progress of a request.
 public struct ProgressResponse {
@@ -49,7 +49,7 @@ public protocol MoyaProviderType: AnyObject {
 }
 
 /// Request provider class. Requests should be made through this class only.
-open class MoyaProvider<Target: TargetType>: MoyaProviderType {
+open class MoyaProvider<Target: TargetType>: MoyaProviderType, @unchecked Sendable {
 
     /// Closure that defines the endpoints for the provider.
     public typealias EndpointClosure = (Target) -> Endpoint
@@ -135,7 +135,7 @@ open class MoyaProvider<Target: TargetType>: MoyaProviderType {
         let cancellableToken = CancellableToken { }
         let preparedRequest = notifyPluginsOfImpendingStub(for: request, target: target)
         let plugins = self.plugins
-        let stub: () -> Void = createStubFunction(cancellableToken, forTarget: target, withCompletion: completion, endpoint: endpoint, plugins: plugins, request: preparedRequest)
+        let stub: @Sendable () -> Void = createStubFunction(cancellableToken, forTarget: target, withCompletion: completion, endpoint: endpoint, plugins: plugins, request: preparedRequest)
         switch stubBehavior {
         case .immediate:
             switch callbackQueue {

@@ -1,7 +1,7 @@
 import Foundation
 
 /// Logs network activity (outgoing requests and incoming responses).
-public final class NetworkLoggerPlugin {
+public final class NetworkLoggerPlugin: @unchecked Sendable {
 
     public var configuration: Configuration
 
@@ -32,7 +32,7 @@ extension NetworkLoggerPlugin: PluginType {
 // MARK: - Logging
 private extension NetworkLoggerPlugin {
 
-    func logNetworkRequest(_ request: RequestType, target: TargetType, completion: @escaping ([String]) -> Void) {
+    func logNetworkRequest(_ request: RequestType, target: TargetType, completion: @escaping @Sendable ([String]) -> Void) {
         //cURL formatting
         if configuration.logOptions.contains(.formatRequestAscURL) {
             _ = request.cURLDescription { [weak self] output in
@@ -154,7 +154,7 @@ public extension NetworkLoggerPlugin {
 }
 
 public extension NetworkLoggerPlugin.Configuration {
-    struct LogOptions: OptionSet {
+    struct LogOptions: OptionSet, Sendable {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
 
@@ -227,7 +227,7 @@ public extension NetworkLoggerPlugin.Configuration {
             return "Moya_Logger: [\(date)] \(identifier): \(message)"
         }
 
-        static var defaultEntryDateFormatter: DateFormatter = {
+        nonisolated(unsafe) static var defaultEntryDateFormatter: DateFormatter = {
             let formatter = DateFormatter()
             formatter.timeStyle = .short
             formatter.dateStyle = .short

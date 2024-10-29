@@ -6,7 +6,7 @@ import Foundation
 ///     - log network requests
 ///     - hide and show a network activity indicator
 ///     - inject additional information into a request
-public protocol PluginType {
+public protocol PluginType: Sendable {
     /// Called to modify a request before sending.
     func prepare(_ request: URLRequest, target: TargetType) -> URLRequest
 
@@ -50,5 +50,5 @@ public protocol RequestType {
     /// cURL representation of the instance.
     ///
     /// - Returns: The cURL equivalent of the instance.
-    func cURLDescription(calling handler: @escaping (String) -> Void) -> Self
+    func cURLDescription(calling handler: @Sendable @escaping (String) -> Void) -> Self
 }
