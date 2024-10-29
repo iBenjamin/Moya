@@ -1,7 +1,7 @@
 import Foundation
 
 /// Represents a response to a `MoyaProvider.request`.
-public final class Response: CustomDebugStringConvertible, Equatable {
+public final class Response: CustomDebugStringConvertible, Equatable, Sendable {
 
     /// The status code of the response.
     public let statusCode: Int
