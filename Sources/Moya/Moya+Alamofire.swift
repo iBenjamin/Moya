@@ -35,7 +35,7 @@ public typealias RequestInterceptor = Alamofire.RequestInterceptor
 
 /// Internal token that can be used to cancel requests
 public final class CancellableToken: Cancellable, CustomDebugStringConvertible,  @unchecked Sendable {
-    let cancelAction: @Sendable () -> Void
+    let cancelAction: () -> Void
     let request: Request?
 
     public fileprivate(set) var isCancelled = false
