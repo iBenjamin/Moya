@@ -30,6 +30,14 @@ public struct Endpoint: Sendable {
     
     /// The HTTP header fields for the request.
     public let httpHeaderFields: [String: String]?
+    
+    public init(url: String, sampleResponseClosure: @escaping SampleResponseClosure, method: HTTPMethod, task: Task, httpHeaderFields: [String : String]?) {
+        self.url = url
+        self.sampleResponseClosure = sampleResponseClosure
+        self.method = method
+        self.task = task
+        self.httpHeaderFields = httpHeaderFields
+    }
 }
 
 /// Extension for converting an `Endpoint` into a `URLRequest`.

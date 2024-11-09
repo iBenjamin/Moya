@@ -40,22 +40,22 @@ public enum Task: @unchecked Sendable {
     case uploadCompositeMultipartFormData(MultipartFormData, urlParameters: Parameters)
     
     /// A file download task to a destination.
-    case downloadDestination(Destination)
+    case downloadDestination(DownloadDestination)
 
     /// A file download task to a destination with extra parameters using the given encoding.
-    case downloadParameters(parameters: Parameters, encoding: ParameterEncoding, destination: Destination)
+    case downloadParameters(parameters: Parameters, encoding: ParameterEncoding, destination: DownloadDestination)
 }
 
-// MARK: Destination
+// MARK: DownloadDestination
 
 /// A closure executed once a `DownloadRequest` has successfully completed in order to determine where to move the
 /// temporary file written to during the download process. The closure takes two arguments: the temporary file URL
 /// and the `HTTPURLResponse`, and returns two values: the file URL where the temporary file should be moved and
 /// the options defining how the file should be moved.
 ///
-/// - Note: Downloads from a local `file://` `URL`s do not use the `Destination` closure, as those downloads do not
+/// - Note: Downloads from a local `file://` `URL`s do not use the `DownloadDestination` closure, as those downloads do not
 ///         return an `HTTPURLResponse`. Instead the file is merely moved within the temporary directory.
-public typealias Destination = @Sendable (_ temporaryURL: URL,
+public typealias DownloadDestination = @Sendable (_ temporaryURL: URL,
                                           _ response: HTTPURLResponse) -> (destinationURL: URL, options: Options)
 
 /// A set of options to be executed prior to moving a downloaded file from the temporary `URL` to the destination

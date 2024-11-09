@@ -12,7 +12,7 @@ public final class Response: CustomDebugStringConvertible, Equatable, Sendable {
     /// The original URLRequest for the response.
     public let request: URLRequest?
 
-    /// The HTTPURLResponse object.
+    /// The URLResponse object.
     public let response: HTTPURLResponse?
 
     public init(statusCode: Int, data: Data, request: URLRequest? = nil, response: HTTPURLResponse? = nil) {

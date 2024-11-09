@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  MoyaProvider.swift
 //  AsyncMoya
 //
 //  Created by Benjamin Wong on 2024/11/1.
@@ -51,6 +51,16 @@ public actor MoyaProvider<Target: TargetType>: @unchecked Sendable {
     /// Returns an `Endpoint` based on the token, method, and parameters by invoking the `endpointClosure`.
     public func endpoint(_ token: Target) -> Endpoint {
         endpointClosure(token)
+    }
+    
+    @discardableResult
+    public func request(_ target: Target) async throws -> Response {
+        let request = try self.endpoint(target).urlRequest()
+        let (data, response) = try await session.data(for: request)
+        guard let response = response as? HTTPURLResponse else {
+            throw MoyaError.invalidServerResponse(response)
+        }
+        return .init(statusCode: response.statusCode, data: data, request: request, response: response)
     }
 }
 

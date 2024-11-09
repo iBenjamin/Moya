@@ -33,6 +33,8 @@ public enum MoyaError: Error, Sendable {
     /// `ParameterEncoding` threw an error during the encoding process.
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
     
+    case invalidServerResponse(URLResponse)
+    
     /// Indicates a response failed to map to an image.
     case imageMapping(Response)
 
