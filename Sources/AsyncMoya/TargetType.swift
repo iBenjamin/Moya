@@ -24,7 +24,7 @@ public protocol TargetType {
     var task: Task { get }
 
     /// The type of validation to perform on the request. Default is `.none`.
-//    var validationType: ValidationType { get }
+    var validationType: ValidationType { get }
 
     /// The headers to be used in the request.
     var headers: [String: String]? { get }

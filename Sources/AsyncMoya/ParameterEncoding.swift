@@ -146,7 +146,7 @@ public struct URLEncoding: ParameterEncoding {
     /// Creates an instance using the specified parameters.
     ///
     /// - Parameters:
-    ///   - destination:   `Destination` defining where the encoded query string will be applied. `.methodDependent` by
+    ///   - destination:   `DownloadDestination` defining where the encoded query string will be applied. `.methodDependent` by
     ///                    default.
     ///   - arrayEncoding: `ArrayEncoding` to use. `.brackets` by default.
     ///   - boolEncoding:  `BoolEncoding` to use. `.numeric` by default.
