@@ -8,6 +8,6 @@
 import Foundation
 
 public enum MoyaInfo {
-    /// Current Alamofire version.
-    public static let version = "0.1.0"
+    /// Current AsyncMoya version.
+    public static let version = "16.0.0"
 }

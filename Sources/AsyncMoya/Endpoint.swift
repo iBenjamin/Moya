@@ -38,6 +38,28 @@ public struct Endpoint: Sendable {
         self.task = task
         self.httpHeaderFields = httpHeaderFields
     }
+    
+    /// Convenience method for creating a new `Endpoint` with the same properties as the receiver, but with added HTTP header fields.
+    public func adding(newHTTPHeaderFields: [String: String]) -> Endpoint {
+        Endpoint(url: url, sampleResponseClosure: sampleResponseClosure, method: method, task: task, httpHeaderFields: add(httpHeaderFields: newHTTPHeaderFields))
+    }
+
+    /// Convenience method for creating a new `Endpoint` with the same properties as the receiver, but with replaced `task` parameter.
+    public func replacing(task: Task) -> Endpoint {
+        Endpoint(url: url, sampleResponseClosure: sampleResponseClosure, method: method, task: task, httpHeaderFields: httpHeaderFields)
+    }
+
+    fileprivate func add(httpHeaderFields headers: [String: String]?) -> [String: String]? {
+        guard let unwrappedHeaders = headers, unwrappedHeaders.isEmpty == false else {
+            return self.httpHeaderFields
+        }
+
+        var newHTTPHeaderFields = self.httpHeaderFields ?? [:]
+        unwrappedHeaders.forEach { key, value in
+            newHTTPHeaderFields[key] = value
+        }
+        return newHTTPHeaderFields
+    }
 }
 
 /// Extension for converting an `Endpoint` into a `URLRequest`.
@@ -84,4 +106,46 @@ public extension Endpoint {
         }
     }
     // swiftlint:enable cyclomatic_complexity
+}
+
+/// Required for using `Endpoint` as a key type in a `Dictionary`.
+extension Endpoint: Equatable, Hashable {
+    public func hash(into hasher: inout Hasher) {
+        switch task {
+        case let .uploadFile(file):
+            hasher.combine(file)
+        case let .uploadMultipartFormData(multipartFormData), let .uploadCompositeMultipartFormData(multipartFormData, _):
+            hasher.combine(multipartFormData)
+        default:
+            break
+        }
+
+        if let request = try? urlRequest() {
+            hasher.combine(request)
+        } else {
+            hasher.combine(url)
+        }
+    }
+
+    /// Note: If both Endpoints fail to produce a URLRequest the comparison will
+    /// fall back to comparing each Endpoint's hashValue.
+    public static func == (lhs: Endpoint, rhs: Endpoint) -> Bool {
+        let areEndpointsEqualInAdditionalProperties: Bool = {
+            switch (lhs.task, rhs.task) {
+            case (let .uploadFile(file1), let .uploadFile(file2)):
+                return file1 == file2
+            case (let .uploadMultipartFormData(multipartFormData1), let .uploadMultipartFormData(multipartFormData2)),
+                 (let .uploadCompositeMultipartFormData(multipartFormData1, _), let .uploadCompositeMultipartFormData(multipartFormData2, _)):
+                return multipartFormData1 == multipartFormData2
+            default:
+                return true
+            }
+        }()
+        let lhsRequest = try? lhs.urlRequest()
+        let rhsRequest = try? rhs.urlRequest()
+        if lhsRequest != nil, rhsRequest == nil { return false }
+        if lhsRequest == nil, rhsRequest != nil { return false }
+        if lhsRequest == nil, rhsRequest == nil { return lhs.hashValue == rhs.hashValue && areEndpointsEqualInAdditionalProperties }
+        return lhsRequest == rhsRequest && areEndpointsEqualInAdditionalProperties
+    }
 }

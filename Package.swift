@@ -10,7 +10,7 @@ let package = Package(
         .macOS(.v12),
         .tvOS(.v15),
         .watchOS(.v8),
-      ],
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -18,18 +18,20 @@ let package = Package(
             targets: ["AsyncMoya"]),
     ],
     dependencies: [
-      .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.10.1")),
+        .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "13.0.0")), // dev
+        .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "7.0.0")), // dev
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-          name: "AsyncMoya", dependencies: [
-            .product(name: "Alamofire", package: "Alamofire")
-          ]),
+            name: "AsyncMoya"),
         .testTarget(
             name: "AsyncMoyaTests",
-            dependencies: ["AsyncMoya"]
+            dependencies: ["AsyncMoya",
+                           .product(name: "Quick", package: "Quick"), // dev
+                           .product(name: "Nimble", package: "Nimble"), // dev
+            ]
         ),
     ]
 )
