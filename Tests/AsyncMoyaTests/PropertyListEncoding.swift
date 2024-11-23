@@ -60,7 +60,9 @@ internal struct PropertyListEncoding: ParameterEncoding {
 
             urlRequest.httpBody = data
         } catch {
-            throw AFError.parameterEncoderFailed(reason: AFError.ParameterEncoderFailureReason.encoderFailed(error: error))
+            // TODO: - fixme
+            throw MoyaError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
+//            throw AFError.parameterEncoderFailed(reason: AFError.ParameterEncoderFailureReason.encoderFailed(error: error))
         }
 
         return urlRequest

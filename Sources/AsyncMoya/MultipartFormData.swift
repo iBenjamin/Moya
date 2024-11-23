@@ -1,5 +1,4 @@
 import Foundation
-import Alamofire
 
 /// Represents "multipart/form-data" for an upload.
 public struct MultipartFormData: Hashable {
