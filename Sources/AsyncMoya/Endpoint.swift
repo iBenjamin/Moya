@@ -146,6 +146,11 @@ extension Endpoint: Equatable, Hashable {
         if lhsRequest != nil, rhsRequest == nil { return false }
         if lhsRequest == nil, rhsRequest != nil { return false }
         if lhsRequest == nil, rhsRequest == nil { return lhs.hashValue == rhs.hashValue && areEndpointsEqualInAdditionalProperties }
+        let s1 = String.init(data: lhsRequest!.httpBody!, encoding: .utf8)
+        let s2 = String.init(data: rhsRequest!.httpBody!, encoding: .utf8)
+        print(s1, s2)
+        print(lhsRequest == rhsRequest)
         return lhsRequest == rhsRequest && areEndpointsEqualInAdditionalProperties
     }
 }
+
