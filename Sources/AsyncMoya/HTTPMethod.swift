@@ -54,3 +54,15 @@ public struct HTTPMethod: RawRepresentable, Equatable, Hashable, Sendable {
         self.rawValue = rawValue
     }
 }
+
+public extension HTTPMethod {
+    /// A Boolean value determining whether the request supports multipart.
+    var supportsMultipart: Bool {
+        switch self {
+        case .post, .put, .patch, .connect:
+            return true
+        default:
+            return false
+        }
+    }
+}
