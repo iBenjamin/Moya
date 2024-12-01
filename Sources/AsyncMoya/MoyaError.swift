@@ -62,3 +62,97 @@ public enum MoyaError: Error, Sendable {
     /// Indicates that an `Endpoint` failed to encode the parameters for the `URLRequest`.
     case parameterEncoding(Swift.Error)
 }
+
+public extension MoyaError {
+    /// Depending on error type, returns a `Response` object.
+    var response: Response? {
+        switch self {
+        case .imageMapping(let response): return response
+        case .jsonMapping(let response): return response
+        case .stringMapping(let response): return response
+        case .objectMapping(_, let response): return response
+        case .encodableMapping: return nil
+        case .statusCode(let response): return response
+        case .underlying(_, let response): return response
+        case .requestMapping: return nil
+        case .parameterEncoding: return nil
+        case .invalidURL(url: let url):
+            return nil
+        case .urlRequestValidationFailed(reason: let reason):
+            return nil
+        case .parameterEncodingFailed(reason: let reason):
+            return nil
+        case .invalidServerResponse(_):
+            return nil
+        }
+    }
+
+    /// Depending on error type, returns an underlying `Error`.
+    internal var underlyingError: Swift.Error? {
+        switch self {
+        case .imageMapping: return nil
+        case .jsonMapping: return nil
+        case .stringMapping: return nil
+        case .objectMapping(let error, _): return error
+        case .encodableMapping(let error): return error
+        case .statusCode: return nil
+        case .underlying(let error, _): return error
+        case .requestMapping: return nil
+        case .parameterEncoding(let error): return error
+        case .invalidURL(url: let url):
+            return nil
+        case .urlRequestValidationFailed(reason: let reason):
+            return nil
+        case .parameterEncodingFailed(reason: let reason):
+            return nil
+        case .invalidServerResponse(_):
+            return nil
+        }
+    }
+}
+
+// MARK: - Error Descriptions
+
+extension MoyaError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .imageMapping:
+            return "Failed to map data to an Image."
+        case .jsonMapping:
+            return "Failed to map data to JSON."
+        case .stringMapping:
+            return "Failed to map data to a String."
+        case .objectMapping:
+            return "Failed to map data to a Decodable object."
+        case .encodableMapping:
+            return "Failed to encode Encodable object into data."
+        case .statusCode:
+            return "Status code didn't fall within the given range."
+        case .underlying(let error, _):
+            return error.localizedDescription
+        case .requestMapping:
+            return "Failed to map Endpoint to a URLRequest."
+        case .parameterEncoding(let error):
+            return "Failed to encode parameters for URLRequest. \(error.localizedDescription)"
+        case .invalidURL(url: let url):
+            return "Invalid url: \(url)"
+        case .urlRequestValidationFailed(reason: let reason):
+            return "Url request validation failed: \(reason)"
+        case .parameterEncodingFailed(reason: let reason):
+            return "Parameter encoding failed: \(reason)"
+        case .invalidServerResponse(let urlResponse):
+            return "Invalid server response: \(urlResponse)"
+        }
+    }
+}
+
+// MARK: - Error User Info
+
+extension MoyaError: CustomNSError {
+    public var errorUserInfo: [String: Any] {
+        var userInfo: [String: Any] = [:]
+        userInfo[NSLocalizedDescriptionKey] = errorDescription
+        userInfo[NSUnderlyingErrorKey] = underlyingError
+        return userInfo
+    }
+}
